@@ -32,13 +32,21 @@ export default function HomePage() {
   }, []);
 
   const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOtp({ email });
-    if (error) {
-      setMessage("Fehler: " + error.message);
-    } else {
-      setMessage("E-Mail zum Login wurde gesendet.");
-    }
-  };
+  if (!email) return;
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/`,
+    },
+  });
+
+  if (error) {
+    setMessage("Fehler: " + error.message);
+  } else {
+    setMessage("E-Mail zum Login wurde gesendet.");
+  }
+};
 
   return (
     <div className="max-w-2xl mx-auto py-10 px-4">
