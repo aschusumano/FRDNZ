@@ -104,18 +104,25 @@ export default function ChatPage() {
 
     const channel = supabase
       .channel("realtime-chat")
-      .on("postgres_changes", {
-        event: "INSERT",
-        schema: "public",
-        table: "messages",
-      }, (payload) => {
-        if (payload.new.group_id === id) {
-          setMessages((prev) => [...prev, payload.new]);
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+        },
+        (payload) => {
+          if (payload.new.group_id === id) {
+            setMessages((prev) => [...prev, payload.new]);
+          }
         }
-      })
+      )
       .subscribe();
 
-    return () => supabase.removeChannel(channel);
+    // ✅ Kein async-return mehr
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [id]);
 
   const handleSend = async () => {
