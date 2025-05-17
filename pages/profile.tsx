@@ -11,25 +11,25 @@ export default function ProfilePage() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const fetchUserAndProfile = async () => {
-      const { data: authData } = await supabase.auth.getUser();
-      const currentUser = authData?.user;
-      setUser(currentUser);
+  const fetchUserAndProfile = async () => {
+    const { data: authData } = await supabase.auth.getUser();
+    const currentUser = authData?.user;
+    setUser(currentUser);
 
-      if (!currentUser) return;
+    if (!currentUser) return;
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("username, avatar_url")
-        .eq("id", currentUser.id)
-        .single();
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("username, avatar_url")
+      .eq("id", currentUser.id)
+      .single();
 
-      if (profile?.username) setUsername(profile.username);
-      if (profile?.avatar_url) setAvatarUrl(profile.avatar_url);
-    };
+    if (profile?.username) setUsername(profile.username);
+    if (profile?.avatar_url) setAvatarUrl(profile.avatar_url);
+  };
 
-    fetchUserAndProfile();
-  }, []);
+  fetchUserAndProfile();
+}, []);
 
   const handleSave = async () => {
     if (!username) {
