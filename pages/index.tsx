@@ -32,19 +32,29 @@ export default function HomePage() {
   }, []);
 
   const handleLogin = async () => {
-    if (!email) return;
+    if (!email) {
+      setMessage("Bitte gib eine gültige E-Mail-Adresse ein.");
+      return;
+    }
+
+    const redirectUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "https://frndz.vercel.app"}/auth/callback`;
+
+    console.log("📩 Sende Magic Link an:", email);
+    console.log("🔁 Weiterleitung zu:", redirectUrl);
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+        emailRedirectTo: redirectUrl,
       },
     });
 
     if (error) {
+      console.error("❌ Fehler beim Login:", error);
       setMessage("Fehler: " + error.message);
     } else {
-      setMessage("E-Mail zum Login wurde gesendet.");
+      console.log("✅ Magic Link erfolgreich versendet.");
+      setMessage("E-Mail zum Login wurde gesendet. Bitte prüfe dein Postfach.");
     }
   };
 
